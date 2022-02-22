@@ -1,9 +1,7 @@
 plugins {
     id "java"
-    id "jacoco"
     id "application"
 
-    id "org.sonarqube" version "3.3"
     id "com.diffplug.spotless" version "6.1.0"
     id "com.github.johnrengelman.shadow" version "7.1.0"
 }
@@ -20,20 +18,11 @@ version = artifactVersion
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
+mainClassName = "io.goodforgod.jmh.Bench"
+
 dependencies {
-    implementation "org.jetbrains:annotations:22.0.0"
-    implementation "ch.qos.logback:logback-classic:1.2.10"
-
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.8.2"
-}
-
-//noinspection GroovyAssignabilityCheck
-run {
-    environment([
-            "SECURITY_ENABLED": "false",
-    ])
+    annotationProcessor "org.openjdk.jmh:jmh-generator-annprocess:1.34"
+    implementation "org.openjdk.jmh:jmh-core:1.34"
 }
 
 test {
@@ -43,19 +32,6 @@ test {
         showStandardStreams(false)
         events("passed", "skipped", "failed")
         exceptionFormat("full")
-    }
-
-    environment([
-            "SECURITY_ENABLED": "false",
-    ])
-
-    jacoco {
-        excludes += ["**/Application*"]
-    }
-
-    reports {
-        html.enabled(false)
-        junitXml.enabled(false)
     }
 }
 
@@ -68,14 +44,12 @@ spotless {
     }
 }
 
-mainClassName = "io.goodforgod.template.Application"
 jar.enabled(true)
 shadowJar {
     mergeServiceFiles()
     manifest {
         attributes "Main-Class": mainClassName
         attributes "Implementation-Version": artifactVersion
-        attributes "Build-Version": buildNumber
         attributes "Build-Time": java.time.OffsetDateTime.now()
     }
 }
@@ -88,19 +62,4 @@ tasks.withType(JavaCompile) {
     options.encoding("UTF-8")
     options.incremental(true)
     options.fork = true
-}
-
-check.dependsOn jacocoTestReport
-jacocoTestReport {
-    reports {
-        xml.enabled(true)
-        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
-    }
-}
-
-javadoc {
-    options.encoding = "UTF-8"
-    if (JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption("html5", true)
-    }
 }

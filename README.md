@@ -1,22 +1,15 @@
 # Java Template
 
-Template for Java 17+ application.
+Template for Java [JVM](https://github.com/openjdk/jmh) benchmark.
 
 ## Features
 - Gradle, build, wrapper, properties configured.
 - [Code Style](https://goodforgod.dev/posts/3/), formatting , .gitignore configured.
-- Dockerfile for packaging application configured.
 
 ## Run
 
 ```shell
 ./gradlew run
-```
-
-## Test
-
-```shell
-./gradlew test
 ```
 
 ## Code Style
